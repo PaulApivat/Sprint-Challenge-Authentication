@@ -22,6 +22,7 @@ function generateToken(user){
     expiresIn: '1h',
     jwtid: '12345'
   }
+  return jwt.sign(payload, secret, options);
 }
 
 function register(req, res) {
@@ -52,6 +53,24 @@ function register(req, res) {
 
 function login(req, res) {
   // implement user login
+  const creds = req.body;
+
+  db('users')
+    .where({ username: creds.username })
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(creds.password, user.password)){
+        //generate a token
+        const token = generateToken(user);
+        //attach token to the response
+        res.status(200).json({ token });
+      } else {
+        res.status(404).json({ err: "invalid username or password"});
+      }
+    })
+    .catch(err => {
+      res.status(500).send(err);
+    })
 }
 
 function getJokes(req, res) {
