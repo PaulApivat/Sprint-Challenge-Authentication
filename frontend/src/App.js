@@ -5,6 +5,7 @@ import './App.css';
 import { NavLink, Route } from 'react-router-dom';
 import Signup from './auth/Signup.js';
 import Signin from './auth/Signin.js';
+import Jokes from './jokes/Jokes.js';
 
 
 class App extends Component {
@@ -21,7 +22,7 @@ class App extends Component {
                   Sign In
                 </NavLink>
                 &nbsp;|&nbsp;
-                <NavLink to='/users' exact>
+                <NavLink to='/jokes' exact>
                   Jokes
                 </NavLink>
                 &nbsp;|&nbsp;
@@ -30,11 +31,17 @@ class App extends Component {
             <main>
               <Route path='/signup' component={Signup} exact></Route>
               <Route path='/signin' component={Signin} exact></Route>
-              {/* <Route path='/users' component={Jokes} exact></Route> */}
+              <Route path='/jokes' component={Jokes} exact></Route>
             </main>
         </header>
       </div>
     );
+  }
+
+
+  signout = () => {
+    localStorage.removeItem('jwt');
+    window.location.reload();
   }
 }
 
