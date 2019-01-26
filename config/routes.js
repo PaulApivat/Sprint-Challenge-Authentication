@@ -8,8 +8,46 @@ module.exports = server => {
   server.get('/api/jokes', authenticate, getJokes);
 };
 
+const bcrypt = require('bcryptjs');
+const knex = require('knex');
+const knexConfig = require('../knexfile.js');
+const db = knex(knexConfig.development);
+
+function generateToken(user){
+  const payload = {
+    username: user.username
+  };
+  const secret = 'backtothefuture';
+  const options = {
+    expiresIn: '1h',
+    jwtid: '12345'
+  }
+}
+
 function register(req, res) {
   // implement user registration
+  const creds = req.body;
+  const hash = bcrypt.hashSync(creds.password, 10);
+  creds.password = hash;
+
+  db('users')
+    .insert(creds)
+    .then(ids => {
+      const id = ids[0];
+
+      //find user id
+      db('users')
+        .where({id})
+        .first()
+        .then(user => {
+          const token = generateToken(user);
+          res.status(201).json({ id: user.id, token })
+        })
+        .catch(err => res.status(500).send(err));
+    })
+    .catch(err => {
+      res.status(500).send(err);
+    });
 }
 
 function login(req, res) {
