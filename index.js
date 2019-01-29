@@ -9,8 +9,9 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const jwt = require('jsonwebtoken');
+
 // required jwtKey
-const jwtKey =
+const secret =
   process.env.JWT_SECRET ||
   'add a .env file to root of project with the JWT_SECRET variable';
 
@@ -28,7 +29,7 @@ const server = express();
 
 server.use(express.json());
 server.use(cors());
-const secret = 'backtothefuture'; // not hardcoded, env variable
+
 
 function generateToken(user){
   const payload = {
